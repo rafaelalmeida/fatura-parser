@@ -3,126 +3,25 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal, InvalidOperation
-from enum import Enum
 from pathlib import Path
 from typing import Any, Optional, List, Dict, Tuple
 import json
+
+from ..core import (
+    Transaction,
+    Fatura,
+    TransactionType,
+    PaymentMethod,
+    Installment,
+    InternationalInfo,
+)
 
 try:
     import pdfplumber
 except ImportError:
     pdfplumber = None  # type: ignore
-
-
-class TransactionType(Enum):
-    """Type of transaction."""
-    A_VISTA = "A_VISTA"
-    PARCELADA = "PARCELADA"
-
-
-class PaymentMethod(Enum):
-    """Payment method used for transaction."""
-    CHIP = "chip"
-    CONTACTLESS = "contactless"
-    APPLE_PAY = "apple_pay"
-    GOOGLE_PAY = "google_pay"
-    ONLINE = "online"
-    UNKNOWN = "unknown"
-
-
-@dataclass
-class Installment:
-    """Installment information for parcelada transactions."""
-    current: int
-    total: int
-
-
-@dataclass
-class InternationalInfo:
-    """Information about international transactions."""
-    original_amount: Decimal
-    original_currency: str
-    exchange_rate: Decimal
-    city: Optional[str] = None
-
-
-@dataclass
-class ItauTransaction:
-    """Represents a single Itaú credit card transaction with full details."""
-    date: date
-    description: str
-    amount_brl: Decimal
-    category: Optional[str] = None
-    location: Optional[str] = None
-    card_last_digits: Optional[str] = None
-    transaction_type: TransactionType = TransactionType.A_VISTA
-    installment: Optional[Installment] = None
-    international: Optional[InternationalInfo] = None
-    payment_method: PaymentMethod = PaymentMethod.UNKNOWN
-
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for JSON serialization."""
-        result: Dict[str, Any] = {
-            "date": self.date.isoformat(),
-            "description": self.description,
-            "amount_brl": str(self.amount_brl),
-            "category": self.category,
-            "location": self.location,
-            "card_last_digits": self.card_last_digits,
-            "transaction_type": self.transaction_type.value,
-            "payment_method": self.payment_method.value,
-        }
-        if self.installment:
-            result["installment"] = {
-                "current": self.installment.current,
-                "total": self.installment.total,
-            }
-        if self.international:
-            result["international"] = {
-                "original_amount": str(self.international.original_amount),
-                "original_currency": self.international.original_currency,
-                "exchange_rate": str(self.international.exchange_rate),
-                "city": self.international.city,
-            }
-        return result
-
-
-@dataclass
-class ItauFatura:
-    """Represents a parsed Itaú credit card fatura."""
-    transactions: List[ItauTransaction] = field(default_factory=list)
-    source_file: str = ""
-    statement_date: Optional[date] = None
-    due_date: Optional[date] = None
-    previous_balance: Decimal = Decimal("0")
-    payment_made: Decimal = Decimal("0")
-    current_charges: Decimal = Decimal("0")
-    total_amount: Decimal = Decimal("0")
-    iof_international: Decimal = Decimal("0")
-
-    @property
-    def calculated_total(self) -> Decimal:
-        """Calculate total from transactions."""
-        return sum((t.amount_brl for t in self.transactions), Decimal("0"))
-
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for JSON serialization."""
-        return {
-            "source_file": self.source_file,
-            "statement_date": self.statement_date.isoformat() if self.statement_date else None,
-            "due_date": self.due_date.isoformat() if self.due_date else None,
-            "previous_balance": str(self.previous_balance),
-            "payment_made": str(self.payment_made),
-            "current_charges": str(self.current_charges),
-            "total_amount": str(self.total_amount),
-            "iof_international": str(self.iof_international),
-            "calculated_total": str(self.calculated_total),
-            "transaction_count": len(self.transactions),
-            "transactions": [t.to_dict() for t in self.transactions],
-        }
 
 
 class ItauPDFParser:
@@ -159,12 +58,12 @@ class ItauPDFParser:
         if pdfplumber is None:
             raise ImportError("pdfplumber is required for PDF parsing. Install with: pip install pdfplumber")
 
-    def parse(self, file_path: Path) -> ItauFatura:
+    def parse(self, file_path: Path) -> Fatura:
         """Parse an Itaú fatura PDF and return structured data."""
         if not file_path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
 
-        fatura = ItauFatura(source_file=str(file_path))
+        fatura = Fatura(source_file=str(file_path), card_issuer="Itaú")
         
         with pdfplumber.open(file_path) as pdf:
             # First pass: extract summary from page 1
@@ -213,7 +112,7 @@ class ItauPDFParser:
         parts = date_str.strip().split("/")
         return date(int(parts[2]), int(parts[1]), int(parts[0]))
 
-    def _parse_summary(self, page, fatura: ItauFatura) -> None:
+    def _parse_summary(self, page, fatura: Fatura) -> None:
         """Parse the summary section from page 1."""
         text = page.extract_text(**self.TEXT_EXTRACTION_SETTINGS) or ""
         
@@ -241,7 +140,7 @@ class ItauPDFParser:
         if match:
             fatura.statement_date = self._parse_full_date(match.group(1))
 
-    def _parse_page_columns(self, page, fatura: ItauFatura, state: Dict[str, Any]) -> None:
+    def _parse_page_columns(self, page, fatura: Fatura, state: Dict[str, Any]) -> None:
         """Parse a page by cropping into left and right columns.
         
         Args:
@@ -273,7 +172,7 @@ class ItauPDFParser:
         except Exception:
             pass
 
-    def _parse_column_text(self, text: str, fatura: ItauFatura, year: int, state: Dict[str, Any]) -> None:
+    def _parse_column_text(self, text: str, fatura: Fatura, year: int, state: Dict[str, Any]) -> None:
         """Parse transactions from a single column's text.
         
         Args:
@@ -369,7 +268,7 @@ class ItauPDFParser:
                 
                 try:
                     tx_date = self._parse_date(date_str, year)
-                    tx = ItauTransaction(
+                    tx = Transaction(
                         date=tx_date,
                         description=description,
                         amount_brl=self._parse_brl_amount(amount_str),
@@ -383,7 +282,7 @@ class ItauPDFParser:
                         next_line = lines[i + 1].strip()
                         cat_match = self.CATEGORY_LOCATION_PATTERN.match(next_line)
                         if cat_match:
-                            tx = ItauTransaction(
+                            tx = Transaction(
                                 date=tx.date,
                                 description=tx.description,
                                 amount_brl=tx.amount_brl,
@@ -415,7 +314,7 @@ class ItauPDFParser:
                 
                 try:
                     tx_date = self._parse_date(date_str, year)
-                    tx = ItauTransaction(
+                    tx = Transaction(
                         date=tx_date,
                         description=description,
                         amount_brl=self._parse_brl_amount(amount_str),
@@ -428,7 +327,7 @@ class ItauPDFParser:
                         next_line = lines[i + 1].strip()
                         cat_match = self.CATEGORY_LOCATION_PATTERN.match(next_line)
                         if cat_match:
-                            tx = ItauTransaction(
+                            tx = Transaction(
                                 date=tx.date,
                                 description=tx.description,
                                 amount_brl=tx.amount_brl,
@@ -445,7 +344,7 @@ class ItauPDFParser:
             
             i += 1
 
-    def _parse_international_from_text(self, pdf, fatura: ItauFatura) -> None:
+    def _parse_international_from_text(self, pdf, fatura: Fatura) -> None:
         """Parse international transactions from cropped columns on pages with international section."""
         statement_year = fatura.statement_date.year if fatura.statement_date else 2025
         
@@ -564,7 +463,7 @@ class ItauPDFParser:
                         pending["orig_amount"] = self._parse_brl_amount(intl_match.group(2))
                         pending["currency"] = intl_match.group(3)
 
-    def _finalize_intl_transaction(self, data: Dict[str, Any], fatura: ItauFatura) -> None:
+    def _finalize_intl_transaction(self, data: Dict[str, Any], fatura: Fatura) -> None:
         """Create an international transaction from accumulated data."""
         intl_info = None
         if "orig_amount" in data and "currency" in data:
@@ -575,7 +474,7 @@ class ItauPDFParser:
                 city=data.get("city"),
             )
         
-        transaction = ItauTransaction(
+        transaction = Transaction(
             date=data["date"],
             description=data["description"],
             amount_brl=data["amount_brl"],
@@ -587,7 +486,7 @@ class ItauPDFParser:
         )
         fatura.transactions.append(transaction)
 
-    def export_json(self, fatura: ItauFatura, output_path: Path) -> None:
+    def export_json(self, fatura: Fatura, output_path: Path) -> None:
         """Export the parsed fatura to a JSON file."""
         with output_path.open("w", encoding="utf-8") as f:
             json.dump(fatura.to_dict(), f, ensure_ascii=False, indent=2)
