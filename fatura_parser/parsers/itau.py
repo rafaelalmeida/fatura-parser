@@ -61,14 +61,19 @@ class ItauPDFParser:
         if pdfplumber is None:
             raise ImportError("pdfplumber is required for PDF parsing. Install with: pip install pdfplumber")
 
-    def parse(self, file_path: Path) -> Fatura:
-        """Parse an Itaú fatura PDF and return structured data."""
+    def parse(self, file_path: Path, password: Optional[str] = None) -> Fatura:
+        """Parse an Itaú fatura PDF and return structured data.
+        
+        Args:
+            file_path: Path to the PDF file
+            password: Optional password for encrypted PDFs
+        """
         if not file_path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
 
         fatura = Fatura(source_file=str(file_path), card_issuer="Itaú")
         
-        with pdfplumber.open(file_path) as pdf:
+        with pdfplumber.open(file_path, password=password) as pdf:
             # First pass: extract summary from page 1
             self._parse_summary(pdf.pages[0], fatura)
             

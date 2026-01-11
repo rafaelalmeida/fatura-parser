@@ -74,6 +74,12 @@ Examples:
     )
 
     parser.add_argument(
+        "-p", "--password-file",
+        type=Path,
+        help="Path to file containing PDF password (for encrypted PDFs)",
+    )
+
+    parser.add_argument(
         "--version",
         action="version",
         version="%(prog)s 0.1.0",
@@ -100,6 +106,15 @@ def run_itau_parser(args: argparse.Namespace) -> int:
 
     input_path: Path = args.input
     
+    # Read password from file if provided
+    password: str | None = None
+    if args.password_file:
+        password_file: Path = args.password_file
+        if not password_file.exists():
+            print(f"Error: Password file not found: {password_file}", file=sys.stderr)
+            return 1
+        password = password_file.read_text().strip()
+    
     # Determine output path
     output_path = args.output
     if output_path is None:
@@ -114,7 +129,7 @@ def run_itau_parser(args: argparse.Namespace) -> int:
 
     try:
         parser = ItauPDFParser()
-        fatura = parser.parse(input_path)
+        fatura = parser.parse(input_path, password=password)
 
         # Export based on format
         if args.format == "json":
