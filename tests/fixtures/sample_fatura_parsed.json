@@ -1,0 +1,1988 @@
+{
+  "source_file": "tests/fixtures/sample_fatura.pdf",
+  "card_issuer": "Itaú",
+  "statement_date": "2025-11-06",
+  "due_date": "2025-11-13",
+  "payment_date": "2025-10-10",
+  "previous_balance": "27579.80",
+  "payment_made": "27579.80",
+  "current_charges": "19101.06",
+  "total_amount": "19101.06",
+  "iof_international": "45.00",
+  "calculated_total": "19056.06",
+  "cards": {
+    "6529": {
+      "holder_name": "RAFAEL A BATISTA",
+      "last_digits": "6529"
+    },
+    "8898": {
+      "holder_name": "RAFAEL A BATISTA",
+      "last_digits": "8898"
+    },
+    "5415": {
+      "holder_name": "RAFAEL A BATISTA",
+      "last_digits": "5415"
+    },
+    "8626": {
+      "holder_name": "RAFAEL A BATISTA",
+      "last_digits": "8626"
+    },
+    "1767": {
+      "holder_name": "RAFAEL A BATISTA",
+      "last_digits": "1767"
+    },
+    "3273": {
+      "holder_name": "RAFAEL A BATISTA",
+      "last_digits": "3273"
+    }
+  },
+  "transactions_by_card": {
+    "6529": [
+      {
+        "date": "2025-10-16",
+        "description": "REDENTOR QUIOSQUE PARK",
+        "amount_brl": "125.95",
+        "category": "ALIMENTAÇÃO",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-18",
+        "description": "UBER* TRIP",
+        "amount_brl": "49.27",
+        "category": "VEÍCULOS",
+        "location": "OSASCO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-21",
+        "description": "POSTO WAP LTDA",
+        "amount_brl": "237.13",
+        "category": "VEÍCULOS",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-26",
+        "description": "DROGARIA ARAUJO",
+        "amount_brl": "377.61",
+        "category": "SAÚDE",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-26",
+        "description": "Daki",
+        "amount_brl": "92.97",
+        "category": "ALIMENTAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-29",
+        "description": "A PAO DE QUEIJARIA",
+        "amount_brl": "21.00",
+        "category": "ALIMENTAÇÃO",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-31",
+        "description": "ODOYA BH LTDA",
+        "amount_brl": "76.84",
+        "category": "ALIMENTAÇÃO",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-03",
+        "description": "DROGARIA ARAUJO",
+        "amount_brl": "212.65",
+        "category": "SAÚDE",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-03",
+        "description": "DROGARIA ARAUJO",
+        "amount_brl": "79.38",
+        "category": "SAÚDE",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-04",
+        "description": "UBER* TRIP",
+        "amount_brl": "9.20",
+        "category": "VEÍCULOS",
+        "location": "OSASCO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-04",
+        "description": "CABELO CAPITAL LTDA",
+        "amount_brl": "35.00",
+        "category": "DIVERSOS",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-04",
+        "description": "UBER* TRIP",
+        "amount_brl": "15.37",
+        "category": "VEÍCULOS",
+        "location": "OSASCO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-04",
+        "description": "UBER* TRIP",
+        "amount_brl": "27.43",
+        "category": "VEÍCULOS",
+        "location": "OSASCO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-05",
+        "description": "BW DISTRITO 78 LTDA",
+        "amount_brl": "70.00",
+        "category": "DIVERSOS",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "6529"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      }
+    ],
+    "8898": [
+      {
+        "date": "2025-10-05",
+        "description": "AMAZONMKTPLC*MEGASISTD",
+        "amount_brl": "39.94",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-05",
+        "description": "AMAZON BR",
+        "amount_brl": "52.20",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-05",
+        "description": "AMAZON BR",
+        "amount_brl": "639.90",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-06",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "55.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-06",
+        "description": "Amazon Prime Canais",
+        "amount_brl": "39.90",
+        "category": "TURISMO E ENTRETENIM",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-07",
+        "description": "AMAZON BR",
+        "amount_brl": "119.99",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-07",
+        "description": "AMAZON MARKETPLACE",
+        "amount_brl": "344.93",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-08",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "51.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-08",
+        "description": "AMAZON BR",
+        "amount_brl": "105.88",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-08",
+        "description": "AMAZONMKTPLC*COMERCIOC",
+        "amount_brl": "45.80",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-08",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "35.00",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-09",
+        "description": "AMAZON BR",
+        "amount_brl": "32.99",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-09",
+        "description": "AMAZON BR",
+        "amount_brl": "124.63",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-10",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "99.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-11",
+        "description": "AMAZON BR",
+        "amount_brl": "20.80",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-12",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "99.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-12",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "19.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-12",
+        "description": "Google News",
+        "amount_brl": "11.39",
+        "category": "TURISMO E ENTRETENIM",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-12",
+        "description": "AmazonPrimeBR",
+        "amount_brl": "19.90",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-12",
+        "description": "Google Revista Quatro",
+        "amount_brl": "96.00",
+        "category": "TURISMO E ENTRETENIM",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-12",
+        "description": "AMAZON BR",
+        "amount_brl": "55.98",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-12",
+        "description": "AMAZON BR",
+        "amount_brl": "234.00",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-12",
+        "description": "AMAZON BR",
+        "amount_brl": "37.90",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-13",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "49.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-13",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "69.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-14",
+        "description": "LINKEDIN",
+        "amount_brl": "79.99",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-15",
+        "description": "AMAZON BR",
+        "amount_brl": "136.83",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-15",
+        "description": "AMAZON MARKETPLACE",
+        "amount_brl": "229.33",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-16",
+        "description": "AMAZONMKTPLC*YOUCOSMET",
+        "amount_brl": "92.90",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-17",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "9.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-17",
+        "description": "AMAZON BR",
+        "amount_brl": "19.32",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-18",
+        "description": "AMAZON BR",
+        "amount_brl": "20.97",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-18",
+        "description": "AMAZON BR",
+        "amount_brl": "64.25",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-18",
+        "description": "AMAZON BR",
+        "amount_brl": "57.90",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-19",
+        "description": "Google Jornal Estado",
+        "amount_brl": "19.90",
+        "category": "TURISMO E ENTRETENIM",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-19",
+        "description": "INSIDER COME*InsiderSt",
+        "amount_brl": "45.19",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-19",
+        "description": "AMAZON BR",
+        "amount_brl": "30.73",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-19",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "28.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-19",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "57.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-19",
+        "description": "AMAZON BR",
+        "amount_brl": "45.80",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-19",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "-28.86",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-19",
+        "description": "AMAZONMKTPLC*CIAHERING",
+        "amount_brl": "107.52",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-22",
+        "description": "AMAZON BR",
+        "amount_brl": "114.39",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-22",
+        "description": "AMAZON BR",
+        "amount_brl": "39.69",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-22",
+        "description": "AMAZON BR",
+        "amount_brl": "22.49",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-22",
+        "description": "AMAZONMKTPLC*REFRIGERA",
+        "amount_brl": "103.99",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-22",
+        "description": "AMAZON BR",
+        "amount_brl": "58.00",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-23",
+        "description": "AMAZONMKTPLC*CASAMAISE",
+        "amount_brl": "26.00",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-23",
+        "description": "ESTAC SHOPPING",
+        "amount_brl": "10.50",
+        "category": "VEÍCULOS",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-23",
+        "description": "Amazon Kindle Unltd",
+        "amount_brl": "19.90",
+        "category": "TURISMO E ENTRETENIM",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-23",
+        "description": "Google One",
+        "amount_brl": "96.99",
+        "category": "TURISMO E ENTRETENIM",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-24",
+        "description": "Amazon Prime Canais",
+        "amount_brl": "27.90",
+        "category": "TURISMO E ENTRETENIM",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-24",
+        "description": "AMAZON BR",
+        "amount_brl": "28.79",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-25",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "22.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-26",
+        "description": "MERCADOLIVRE*PRECIOSO",
+        "amount_brl": "57.45",
+        "category": "DIVERSOS",
+        "location": "VALINHOS",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-27",
+        "description": "AMAZON BR",
+        "amount_brl": "223.01",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-28",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "53.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-28",
+        "description": "ESTAC SHOPPING",
+        "amount_brl": "5.25",
+        "category": "VEÍCULOS",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-29",
+        "description": "EBN *SPOTIFY",
+        "amount_brl": "31.90",
+        "category": "DIVERSOS",
+        "location": "CURITIBA",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-29",
+        "description": "AMAZON MARKETPLACE",
+        "amount_brl": "180.54",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-30",
+        "description": "VIAMOBILIDADE",
+        "amount_brl": "210.00",
+        "category": "VEÍCULOS",
+        "location": "OSASCO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-01",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "99.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-01",
+        "description": "Google CLOUD GzK735",
+        "amount_brl": "4.17",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-01",
+        "description": "AMAZONMKTPLC*ADEOBERNA",
+        "amount_brl": "196.00",
+        "category": "ALIMENTAÇÃO",
+        "location": "AMPARO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-01",
+        "description": "AMAZONMKTPLC*TTIMPORTA",
+        "amount_brl": "65.99",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-01",
+        "description": "AMAZON BR",
+        "amount_brl": "24.45",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-02",
+        "description": "EDITORA O GLOBO VALOR",
+        "amount_brl": "70.90",
+        "category": "DIVERSOS",
+        "location": "RIO DE JANEIR",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-02",
+        "description": "AMAZONMKTPLC*RJMDISTRI",
+        "amount_brl": "20.99",
+        "category": "MORADIA",
+        "location": "AMPARO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-02",
+        "description": "AMAZON BR",
+        "amount_brl": "242.27",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-03",
+        "description": "APPLE.COM/BILL",
+        "amount_brl": "137.90",
+        "category": "HOBBY",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-04",
+        "description": "AMAZONMKTPLC*MDJCOMERC",
+        "amount_brl": "132.80",
+        "category": "ALIMENTAÇÃO",
+        "location": "SAO JOAO DE M",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-04",
+        "description": "AMAZON BR",
+        "amount_brl": "33.96",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-04",
+        "description": "AMAZON BR",
+        "amount_brl": "89.20",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-05",
+        "description": "AMAZON MARKETPLACE",
+        "amount_brl": "347.79",
+        "category": "EDUCAÇÃO",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-05",
+        "description": "AMAZON BR",
+        "amount_brl": "50.39",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-05",
+        "description": "AMAZON BR",
+        "amount_brl": "162.83",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-05",
+        "description": "AMAZON BR",
+        "amount_brl": "9.47",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-05",
+        "description": "AMAZON BR",
+        "amount_brl": "21.47",
+        "category": "DIVERSOS",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-11-05",
+        "description": "Clube Livelo",
+        "amount_brl": "44.90",
+        "category": "DIVERSOS",
+        "location": "BARUERI",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-06",
+        "description": "THE NEW YORK TIMES",
+        "amount_brl": "84.45",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "15.00",
+          "original_currency": "USD",
+          "exchange_rate": "5.63",
+          "city": "NEW YORK"
+        }
+      },
+      {
+        "date": "2025-10-09",
+        "description": "CRACKING THE CODE",
+        "amount_brl": "198.10",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "35.00",
+          "original_currency": "USD",
+          "exchange_rate": "5.66",
+          "city": "BROOKLYN"
+        }
+      },
+      {
+        "date": "2025-10-13",
+        "description": "OREILLYMEDIAPLATFORM",
+        "amount_brl": "282.73",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-14",
+        "description": "GITHUB, INC.",
+        "amount_brl": "58.30",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "10.00",
+          "original_currency": "USD",
+          "exchange_rate": "5.83",
+          "city": "SAN FRANCISCO"
+        }
+      },
+      {
+        "date": "2025-10-17",
+        "description": "MOISES AI PLATFORM",
+        "amount_brl": "52.84",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "49.99",
+          "original_currency": "BRL",
+          "exchange_rate": "5.75",
+          "city": "SALT LAKE CIT"
+        }
+      },
+      {
+        "date": "2025-10-21",
+        "description": "Kindle Svcs*NU20W9540",
+        "amount_brl": "93.25",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "16.36",
+          "original_currency": "USD",
+          "exchange_rate": "5.70",
+          "city": "SEATTLE"
+        }
+      },
+      {
+        "date": "2025-10-23",
+        "description": "HBR*SUBSCRIPTION",
+        "amount_brl": "131.10",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8898"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null
+      }
+    ],
+    "5415": [
+      {
+        "date": "2025-03-26",
+        "description": "AUTO JAPAN",
+        "amount_brl": "342.61",
+        "category": "VEÍCULOS",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 8,
+          "total": 10
+        }
+      },
+      {
+        "date": "2025-05-08",
+        "description": "VIVARA DIA",
+        "amount_brl": "185.00",
+        "category": "DIVERSOS",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 6,
+          "total": 10
+        }
+      },
+      {
+        "date": "2025-06-05",
+        "description": "MERCADOLIVRE*MPBAB",
+        "amount_brl": "140.39",
+        "category": "VEÍCULOS",
+        "location": "OSASCO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 6,
+          "total": 12
+        }
+      },
+      {
+        "date": "2025-06-07",
+        "description": "ALO BEBE",
+        "amount_brl": "170.69",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 5,
+          "total": 8
+        }
+      },
+      {
+        "date": "2025-07-07",
+        "description": "MAXI VACINA",
+        "amount_brl": "412.50",
+        "category": "SAÚDE",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 4,
+          "total": 4
+        }
+      },
+      {
+        "date": "2025-07-16",
+        "description": "ALFAIATARIA PARAMO",
+        "amount_brl": "351.54",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 4,
+          "total": 5
+        }
+      },
+      {
+        "date": "2025-07-17",
+        "description": "ZZRSV MG BH SHOPPI",
+        "amount_brl": "348.63",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 4,
+          "total": 5
+        }
+      },
+      {
+        "date": "2025-07-17",
+        "description": "PAOLA DA VINCI",
+        "amount_brl": "231.35",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 4,
+          "total": 6
+        }
+      },
+      {
+        "date": "2025-07-20",
+        "description": "ZZOFC MG BH SHOPPI",
+        "amount_brl": "327.20",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 4,
+          "total": 6
+        }
+      },
+      {
+        "date": "2025-08-16",
+        "description": "HOSPITAL MATER DEI",
+        "amount_brl": "901.20",
+        "category": "SAÚDE",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 3,
+          "total": 6
+        }
+      },
+      {
+        "date": "2025-08-18",
+        "description": "HOSPITAL MATER DEI",
+        "amount_brl": "122.00",
+        "category": "SAÚDE",
+        "location": "BELO HORIZONT",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 3,
+          "total": 6
+        }
+      },
+      {
+        "date": "2025-09-11",
+        "description": "ZZOFC MG BH SHOPPI",
+        "amount_brl": "183.90",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 2,
+          "total": 6
+        }
+      },
+      {
+        "date": "2025-09-11",
+        "description": "ZZOFC MG BH SHOPPING",
+        "amount_brl": "-0.25",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-06",
+        "description": "UBER* TRIP",
+        "amount_brl": "10.89",
+        "category": "VEÍCULOS",
+        "location": "OSASCO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      },
+      {
+        "date": "2025-10-07",
+        "description": "aliexpress",
+        "amount_brl": "990.13",
+        "category": "TURISMO E ENTRETENIM",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "5415"
+        },
+        "transaction_type": "A_VISTA",
+        "payment_method": "unknown",
+        "exported_at": null
+      }
+    ],
+    "8626": [
+      {
+        "date": "2025-05-17",
+        "description": "FASTSHO*FS00D2X*Fa",
+        "amount_brl": "14.90",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8626"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 6,
+          "total": 12
+        }
+      },
+      {
+        "date": "2025-05-21",
+        "description": "CLARA ARTE",
+        "amount_brl": "1517.29",
+        "category": "TURISMO E ENTRETENIM",
+        "location": "BRUMADINHO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8626"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 6,
+          "total": 8
+        }
+      },
+      {
+        "date": "2025-06-16",
+        "description": "PG *DOREL COMERCIO",
+        "amount_brl": "775.97",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8626"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 5,
+          "total": 10
+        }
+      },
+      {
+        "date": "2025-07-20",
+        "description": "AREZZO INDUSTRIA E",
+        "amount_brl": "100.04",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8626"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 4,
+          "total": 6
+        }
+      },
+      {
+        "date": "2025-08-21",
+        "description": "ACCOR",
+        "amount_brl": "515.92",
+        "category": "TURISMO E ENTRETENIM",
+        "location": "SAO PAULO",
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "8626"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 3,
+          "total": 6
+        }
+      }
+    ],
+    "1767": [
+      {
+        "date": "2025-08-12",
+        "description": "TAM CALLCENTER",
+        "amount_brl": "1470.89",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "1767"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 3,
+          "total": 4
+        }
+      }
+    ],
+    "3273": [
+      {
+        "date": "2025-09-02",
+        "description": "MP *SAMSUNG",
+        "amount_brl": "618.89",
+        "category": null,
+        "location": null,
+        "card": {
+          "holder_name": "RAFAEL A BATISTA",
+          "last_digits": "3273"
+        },
+        "transaction_type": "PARCELADA",
+        "payment_method": "unknown",
+        "exported_at": null,
+        "installment": {
+          "current": 3,
+          "total": 18
+        }
+      }
+    ],
+    "international": [
+      {
+        "date": "2025-10-24",
+        "description": "GAMMA.APP",
+        "amount_brl": "105.74",
+        "category": null,
+        "location": null,
+        "card": null,
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "100.00",
+          "original_currency": "BRL",
+          "exchange_rate": "5.70",
+          "city": "SAN FRANCISCO"
+        }
+      },
+      {
+        "date": "2025-10-26",
+        "description": "READWISE",
+        "amount_brl": "25.59",
+        "category": null,
+        "location": null,
+        "card": null,
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "4.49",
+          "original_currency": "USD",
+          "exchange_rate": "5.70",
+          "city": "PITTSBURGH"
+        }
+      },
+      {
+        "date": "2025-10-31",
+        "description": "DIGITALOCEAN.COM",
+        "amount_brl": "41.04",
+        "category": null,
+        "location": null,
+        "card": null,
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "7.20",
+          "original_currency": "USD",
+          "exchange_rate": "5.70",
+          "city": "AMSTERDAM"
+        }
+      },
+      {
+        "date": "2025-11-03",
+        "description": "THE NEW YORK TIMES",
+        "amount_brl": "85.20",
+        "category": null,
+        "location": null,
+        "card": null,
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "15.00",
+          "original_currency": "USD",
+          "exchange_rate": "5.68",
+          "city": "NEW YORK"
+        }
+      },
+      {
+        "date": "2025-11-04",
+        "description": "REFACTORING NEWSLETTER",
+        "amount_brl": "47.71",
+        "category": null,
+        "location": null,
+        "card": null,
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "45.00",
+          "original_currency": "BRL",
+          "exchange_rate": "5.70",
+          "city": "ROME"
+        }
+      },
+      {
+        "date": "2025-11-04",
+        "description": "THE HYBRID HACKER",
+        "amount_brl": "37.11",
+        "category": null,
+        "location": null,
+        "card": null,
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "35.00",
+          "original_currency": "BRL",
+          "exchange_rate": "5.70",
+          "city": "ROMA"
+        }
+      },
+      {
+        "date": "2025-11-05",
+        "description": "1PASSWORD",
+        "amount_brl": "39.55",
+        "category": null,
+        "location": null,
+        "card": null,
+        "transaction_type": "A_VISTA",
+        "payment_method": "online",
+        "exported_at": null,
+        "international": {
+          "original_amount": "6.95",
+          "original_currency": "USD",
+          "exchange_rate": "5.69",
+          "city": "TORONTO"
+        }
+      }
+    ]
+  }
+}

@@ -66,14 +66,12 @@ class TestItauPDFParserStructure:
             card_totals[card] = card_totals.get(card, Decimal("0")) + tx.amount_brl
 
         assert card_totals["6529"] == Decimal("1429.80")
-        # 8898 includes international transactions
-        assert card_totals["8898"] == Decimal("7512.64")
+        # 8898 includes all international transactions (14 total)
+        assert card_totals["8898"] == Decimal("7894.58")
         assert card_totals["5415"] == Decimal("4717.78")
         assert card_totals["8626"] == Decimal("2924.12")
         assert card_totals["1767"] == Decimal("1470.89")
         assert card_totals["3273"] == Decimal("618.89")
-        # Some international transactions may not have card headers
-        assert "unknown" in card_totals
 
     def test_cards_parsed(self, parsed_fatura: Fatura):
         """Test that cards are parsed with holder names."""
@@ -170,7 +168,7 @@ class TestItauTransactionParsing:
         """Test parsing of international transactions."""
         # Find a known international transaction
         intl_txs = [t for t in parsed_fatura.transactions if t.international is not None]
-        assert len(intl_txs) == 12  # 12 international transactions
+        assert len(intl_txs) == 14  # 14 international transactions (all on card 8898)
 
         # Check a specific international transaction
         github_tx = next(

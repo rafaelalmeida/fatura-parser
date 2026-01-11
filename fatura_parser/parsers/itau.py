@@ -38,24 +38,27 @@ class ItauPDFParser:
     
     # Regex patterns (updated for properly spaced text)
     # Note: Credit transactions have "- " (minus with space) before amount
+    # Brazilian amount format uses . as thousands separator and , as decimal (e.g., 1.234,56)
+    # Do NOT allow space as thousands separator - it would incorrectly match column gaps
     DATE_PATTERN = re.compile(r"^(\d{2}/\d{2})\s+")
-    AMOUNT_PATTERN = re.compile(r"((?:-\s*)?\d{1,3}(?:[\. ]\d{3})*,\d{2})$")
+    AMOUNT_PATTERN = re.compile(r"((?:-\s*)?\d{1,3}(?:\.\d{3})*,\d{2})$")
     CATEGORY_LOCATION_PATTERN = re.compile(r"^([A-ZÇÃÕÉÊÍÓÚÀÂÔÜ][A-ZÇÃÕÉÊÍÓÚÀÂÔÜ ]*?)\s*\.\s*([A-Za-zçãõéêíóúàâôü ]+)$")
-    INSTALLMENT_PATTERN = re.compile(r"(\d{2})/(\d{2})\s+((?:-\s*)?\d{1,3}(?:[\. ]\d{3})*,\d{2})$")
+    INSTALLMENT_PATTERN = re.compile(r"(\d{2})/(\d{2})\s+((?:-\s*)?\d{1,3}(?:\.\d{3})*,\d{2})$")
     CARD_FINAL_PATTERN = re.compile(r"final\s*(\d{4})")
     # Card header format: "RAFAEL A BATISTA (final 6529)" - cardholder name with optional middle initials
     CARD_HEADER_PATTERN = re.compile(r"([A-Z][A-Z\s]+?)\s*\(\s*final\s*(\d{4})\s*\)")
-    TOTAL_FATURA_PATTERN = re.compile(r"Total\s*desta\s*fatura\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
-    PREVIOUS_BALANCE_PATTERN = re.compile(r"Total\s*da\s*fatura\s*anterior\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
-    PAYMENT_PATTERN = re.compile(r"Pagamento\s*efetuado\s*em\s*(\d{2}/\d{2}/\d{4})\s*[-\s]+(\d{1,3}(?:[.\s]\d{3})*,\d{2})")
-    CURRENT_CHARGES_PATTERN = re.compile(r"Lançamentos\s*atuais\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
+    TOTAL_FATURA_PATTERN = re.compile(r"Total\s*desta\s*fatura\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
+    PREVIOUS_BALANCE_PATTERN = re.compile(r"Total\s*da\s*fatura\s*anterior\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
+    PAYMENT_PATTERN = re.compile(r"Pagamento\s*efetuado\s*em\s*(\d{2}/\d{2}/\d{4})\s*[-\s]+(\d{1,3}(?:\.\d{3})*,\d{2})")
+    CURRENT_CHARGES_PATTERN = re.compile(r"Lançamentos\s*atuais\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
     DUE_DATE_PATTERN = re.compile(r"Vencimento\s*:\s*(\d{2}/\d{2}/\d{4})")
     STATEMENT_DATE_PATTERN = re.compile(r"Emissão\s*:\s*(\d{2}/\d{2}/\d{4})")
-    CARD_SUBTOTAL_PATTERN = re.compile(r"Lançamentos\s*no\s*cartão\s*\(\s*final\s*(\d{4})\s*\)\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
-    INTL_TOTAL_PATTERN = re.compile(r"Total\s*transações\s*inter\.?\s*em\s*R\s*\$\s*(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
-    IOF_INTL_PATTERN = re.compile(r"Repasse\s*de\s*IOF\s*em\s*R\s*\$\s*(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
+    CARD_SUBTOTAL_PATTERN = re.compile(r"Lançamentos\s*no\s*cartão\s*\(\s*final\s*(\d{4})\s*\)\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
+    INTL_TOTAL_PATTERN = re.compile(r"Total\s*transações\s*inter\.?\s*em\s*R\s*\$\s*(-?\d{1,3}(?:\.\d{3})*,\d{2})")
+    IOF_INTL_PATTERN = re.compile(r"Repasse\s*de\s*IOF\s*em\s*R\s*\$\s*(-?\d{1,3}(?:\.\d{3})*,\d{2})")
     EXCHANGE_RATE_PATTERN = re.compile(r"Dólar\s*de\s*Conversão\s*R\s*\$\s*(\d+,\d{2})")
-    INTL_DETAILS_PATTERN = re.compile(r"([A-Z][A-Z0-9\- ]+?)\s+(\d+,\d{2})\s+(USD|BRL|EUR)\s+(\d+,\d{2})")
+    # International details: CITY/PHONE AMOUNT CURRENCY AMOUNT (can start with numbers or have lowercase)
+    INTL_DETAILS_PATTERN = re.compile(r"([A-Za-z0-9][A-Za-z0-9.\-/ ]+?)\s+(\d+,\d{2})\s+(USD|BRL|EUR)\s+(\d+,\d{2})")
 
     def __init__(self):
         if pdfplumber is None:
@@ -362,6 +365,9 @@ class ItauPDFParser:
         """Parse international transactions from cropped columns on pages with international section."""
         statement_year = fatura.statement_date.year if fatura.statement_date else 2025
         
+        # Track card across pages and columns for continuation
+        last_card: Optional[Card] = None
+        
         for page in pdf.pages:
             full_text = page.extract_text(**self.TEXT_EXTRACTION_SETTINGS) or ""
             
@@ -385,7 +391,8 @@ class ItauPDFParser:
                     continue
                 
                 lines = col_text.split("\n")
-                current_card: Optional[Card] = None
+                # Start with last_card from previous column/page for continuations
+                current_card: Optional[Card] = last_card
                 in_intl_section = False
                 pending: Optional[Dict[str, Any]] = None
                 
@@ -399,29 +406,39 @@ class ItauPDFParser:
                             holder_name = card_header_match.group(1).strip()
                             last_digits = card_header_match.group(2)
                             current_card = Card(holder_name=holder_name, last_digits=last_digits)
+                            last_card = current_card  # Update for continuation tracking
                             fatura.cards[last_digits] = current_card
                         continue
                     
                     if not in_intl_section:
                         continue
                     
-                    # End of international section
+                    # End of international section for this card (but more cards may follow)
                     if "Total transa" in line and "inter" in line:
                         if pending:
                             self._finalize_intl_transaction(pending, fatura)
                             pending = None
-                        # Don't set in_intl_section = False yet - IOF line comes next
+                        # Don't set in_intl_section = False - more cards may have international
                         continue
                     
                     # Parse IOF line (comes after Total transações inter)
+                    # IOF is cumulative per section, so we ADD to existing
                     if "Repasse" in line and "IOF" in line:
                         iof_match = self.IOF_INTL_PATTERN.search(line)
                         if iof_match:
-                            fatura.iof_international = self._parse_brl_amount(iof_match.group(1))
+                            fatura.iof_international += self._parse_brl_amount(iof_match.group(1))
                         continue
                     
-                    # End after total with IOF
+                    # Total lançamentos line - just continue (more cards may follow)
                     if "Total lan" in line and "inter" in line:
+                        # Don't set in_intl_section = False - more cards may have international
+                        continue
+                    
+                    # End when we see "Compras parceladas" or similar
+                    if "Compras parceladas" in line or "próximas faturas" in line:
+                        if pending:
+                            self._finalize_intl_transaction(pending, fatura)
+                            pending = None
                         in_intl_section = False
                         continue
                     
@@ -438,6 +455,7 @@ class ItauPDFParser:
                         holder_name = card_header_match.group(1).strip()
                         last_digits = card_header_match.group(2)
                         current_card = Card(holder_name=holder_name, last_digits=last_digits)
+                        last_card = current_card  # Update for continuation tracking
                         fatura.cards[last_digits] = current_card
                         continue
                     
