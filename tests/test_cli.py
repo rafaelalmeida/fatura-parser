@@ -19,10 +19,20 @@ class TestArgumentParser:
         parser = create_parser()
         assert parser.prog == "fatura-parser"
 
-    def test_required_input_argument(self):
+    def test_input_argument_optional_for_batch(self):
+        """Input is optional when using batch mode."""
         parser = create_parser()
-        with pytest.raises(SystemExit):
-            parser.parse_args([])
+        # No longer raises - input is optional for batch mode
+        args = parser.parse_args([])
+        assert args.input is None
+        assert args.batch is None
+
+    def test_batch_argument(self):
+        """Batch mode accepts a directory path."""
+        parser = create_parser()
+        args = parser.parse_args(["--batch", "/some/dir", "--format", "ynab"])
+        assert args.batch == Path("/some/dir")
+        assert args.format == "ynab"
 
     def test_input_argument(self):
         parser = create_parser()

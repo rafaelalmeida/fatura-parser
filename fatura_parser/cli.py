@@ -19,7 +19,7 @@ class CardIssuer:
 
 
 def create_parser() -> argparse.ArgumentParser:
-    """Create and configure the argument parser."""
+    """Create and configure the argument parser for single file mode."""
     parser = argparse.ArgumentParser(
         prog="fatura-parser",
         description="Parse Brazilian credit card faturas (CSV/PDF) into structured formats",
@@ -29,12 +29,25 @@ Examples:
   %(prog)s fatura.pdf --issuer itau -o output.json
   %(prog)s fatura.csv -o output.csv
   %(prog)s fatura.pdf --format ynab -o transactions.csv
+  
+Batch mode:
+  %(prog)s --batch /path/to/pdfs --format ynab
+  %(prog)s --batch /path/to/pdfs --format json -p ~/.fatura-password
         """,
+    )
+
+    # Batch mode flag
+    parser.add_argument(
+        "--batch",
+        type=Path,
+        metavar="DIR",
+        help="Run in interactive batch mode: process all PDFs in DIR",
     )
 
     parser.add_argument(
         "input",
         type=Path,
+        nargs="?",
         help="Input fatura file (CSV or PDF)",
     )
 
@@ -250,6 +263,21 @@ def main() -> None:
     """Main entry point for the CLI."""
     parser = create_parser()
     args = parser.parse_args()
+    
+    # Handle batch mode
+    if args.batch:
+        from fatura_parser.batch import run_batch
+        sys.exit(run_batch(
+            root_dir=args.batch,
+            export_format=args.format,
+            password_file=args.password_file,
+            verbose=args.verbose,
+        ))
+    
+    # Single file mode requires input
+    if args.input is None:
+        parser.error("the following arguments are required: input (or use --batch for batch mode)")
+    
     sys.exit(run(args))
 
 

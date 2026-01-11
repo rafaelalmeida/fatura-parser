@@ -41,6 +41,27 @@ fatura-parser fatura.csv -v
 - `-t, --type`: Input file type (`csv` or `pdf`), auto-detected by default
 - `-p, --password-file`: Path to file containing PDF password (for encrypted PDFs)
 - `-v, --verbose`: Enable verbose output
+- `--batch DIR`: Run interactive batch mode on all PDFs in DIR
+
+## Interactive Batch Mode
+
+Process multiple PDF faturas interactively with checksum verification:
+
+```bash
+# Export all PDFs in a directory to YNAB format
+fatura-parser --batch /path/to/faturas --format ynab
+
+# Batch export to JSON with password
+fatura-parser --batch /path/to/faturas --format json -p ~/.fatura-password
+```
+
+Batch mode features:
+- Recursively finds all PDF files in the directory
+- Shows checksum verification for each file
+- Prompts to accept or reject each export
+- Handles existing files (skip, replace, or view)
+- Creates a timestamped log file with all actions
+- Colored terminal output for better visibility
 
 ## Development
 
