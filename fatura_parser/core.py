@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from enum import Enum
 from pathlib import Path
@@ -47,6 +47,30 @@ class Installment:
 
 
 @dataclass
+class Card:
+    """Represents a credit card with holder name and last digits."""
+    holder_name: str
+    last_digits: str
+    
+    @property
+    def short_name(self) -> str:
+        """Return first 3 letters of holder name in uppercase."""
+        return self.holder_name[:3].upper() if self.holder_name else ""
+    
+    @property
+    def display_id(self) -> str:
+        """Return formatted card ID like 'RAF*1234'."""
+        return f"{self.short_name}*{self.last_digits}"
+    
+    def to_dict(self) -> Dict[str, str]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "holder_name": self.holder_name,
+            "last_digits": self.last_digits,
+        }
+
+
+@dataclass
 class InternationalInfo:
     """Information about international transactions."""
     original_amount: Decimal
@@ -63,11 +87,18 @@ class Transaction:
     amount_brl: Decimal
     category: Optional[str] = None
     location: Optional[str] = None
-    card_last_digits: Optional[str] = None
+    card: Optional[Card] = None
     transaction_type: TransactionType = TransactionType.A_VISTA
     installment: Optional[Installment] = None
     international: Optional[InternationalInfo] = None
     payment_method: PaymentMethod = PaymentMethod.UNKNOWN
+    exported_at: Optional[datetime] = None
+
+    # Backwards compatibility property
+    @property
+    def card_last_digits(self) -> Optional[str]:
+        """Return card last digits for backwards compatibility."""
+        return self.card.last_digits if self.card else None
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
@@ -77,9 +108,10 @@ class Transaction:
             "amount_brl": str(self.amount_brl),
             "category": self.category,
             "location": self.location,
-            "card_last_digits": self.card_last_digits,
+            "card": self.card.to_dict() if self.card else None,
             "transaction_type": self.transaction_type.value,
             "payment_method": self.payment_method.value,
+            "exported_at": self.exported_at.isoformat() if self.exported_at else None,
         }
         if self.installment:
             result["installment"] = {
@@ -110,6 +142,7 @@ class Transaction:
 class Fatura:
     """Represents a parsed credit card statement (fatura)."""
     transactions: List[Transaction] = field(default_factory=list)
+    cards: Dict[str, Card] = field(default_factory=dict)  # key: last_digits
     source_file: str = ""
     card_issuer: Optional[str] = None
     statement_date: Optional[date] = None
@@ -131,8 +164,26 @@ class Fatura:
         """Calculate total amount of all transactions (alias for calculated_total)."""
         return self.calculated_total
 
+    def transactions_by_card(self) -> Dict[str, List[Transaction]]:
+        """Return transactions grouped by card last digits."""
+        result: Dict[str, List[Transaction]] = {}
+        for tx in self.transactions:
+            key = tx.card.last_digits if tx.card else "unknown"
+            if key not in result:
+                result[key] = []
+            result[key].append(tx)
+        return result
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
+        # Group transactions by card for the JSON structure
+        transactions_by_card = {}
+        for tx in self.transactions:
+            key = tx.card.last_digits if tx.card else "international"
+            if key not in transactions_by_card:
+                transactions_by_card[key] = []
+            transactions_by_card[key].append(tx.to_dict())
+        
         return {
             "source_file": self.source_file,
             "card_issuer": self.card_issuer,
@@ -145,7 +196,8 @@ class Fatura:
             "total_amount": str(self.total_amount),
             "iof_international": str(self.iof_international),
             "calculated_total": str(self.calculated_total),
-            "transactions": [t.to_dict() for t in self.transactions],
+            "cards": {k: v.to_dict() for k, v in self.cards.items()},
+            "transactions_by_card": transactions_by_card,
         }
 
 
@@ -240,13 +292,16 @@ class YNABExporter:
         """Return the first day of the month for a given date."""
         return date(d.year, d.month, 1)
 
-    def _build_memo(self, tx: Transaction, original_date: Optional[date] = None) -> str:
-        """Build compact memo with transaction details separated by ';'."""
+    def _build_memo(self, tx: Transaction, original_date: Optional[date] = None, exported_at: Optional[datetime] = None) -> str:
+        """Build compact memo with transaction details separated by ';'.
+        
+        Field order: card, orig, parcela, intl, city, loc, cat, exp (cat and exp are always last)
+        """
         parts: List[str] = []
         
-        # Card info
-        if tx.card_last_digits:
-            parts.append(f"card:{tx.card_last_digits}")
+        # Card info (using RAF*1234 format)
+        if tx.card:
+            parts.append(f"card:{tx.card.display_id}")
         
         # Original date for parcelada
         if original_date:
@@ -263,13 +318,17 @@ class YNABExporter:
             if intl.city:
                 parts.append(f"city:{intl.city}")
         
-        # Category
-        if tx.category:
-            parts.append(f"cat:{tx.category}")
-        
         # Location
         if tx.location:
             parts.append(f"loc:{tx.location}")
+        
+        # Category (always near the end)
+        if tx.category:
+            parts.append(f"cat:{tx.category}")
+        
+        # Exported at timestamp (always last)
+        if exported_at:
+            parts.append(f"exp:{exported_at.strftime('%Y-%m-%d %H:%M')}")
         
         return "; ".join(parts)
 
@@ -286,6 +345,7 @@ class YNABExporter:
         
         rows: List[Dict[str, str]] = []
         checksum = Decimal("0")
+        exported_at = datetime.now()
         
         # Get statement first of month for parcelada effective date
         if fatura.statement_date:
@@ -295,6 +355,9 @@ class YNABExporter:
         
         # Process all transactions
         for tx in fatura.transactions:
+            # Set exported_at on the transaction
+            tx.exported_at = exported_at
+            
             # For parcelada, use first of statement month as effective date
             if tx.transaction_type == TransactionType.PARCELADA:
                 tx_date = effective_date
@@ -303,7 +366,7 @@ class YNABExporter:
                 tx_date = tx.date
                 original_date = None
             
-            memo = self._build_memo(tx, original_date)
+            memo = self._build_memo(tx, original_date, exported_at)
             
             row = {
                 "Date": self._format_date(tx_date),
@@ -320,7 +383,7 @@ class YNABExporter:
             row = {
                 "Date": self._format_date(effective_date),
                 "Payee": "IOF Internacional",
-                "Memo": "iof",
+                "Memo": f"iof; exp:{exported_at.strftime('%Y-%m-%d %H:%M')}",
                 "Outflow": self._format_amount(fatura.iof_international),
                 "Inflow": "",
             }
@@ -332,7 +395,7 @@ class YNABExporter:
             row = {
                 "Date": self._format_date(fatura.payment_date),
                 "Payee": "Pagamento Fatura Anterior",
-                "Memo": "payment",
+                "Memo": f"payment; exp:{exported_at.strftime('%Y-%m-%d %H:%M')}",
                 "Outflow": "",
                 "Inflow": self._format_amount(fatura.payment_made),
             }

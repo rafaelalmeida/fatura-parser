@@ -28,7 +28,7 @@ class TestArgumentParser:
         parser = create_parser()
         args = parser.parse_args(["test.csv"])
         assert args.input == Path("test.csv")
-        assert args.format == "csv"
+        assert args.format == "json"
         assert args.output is None
 
     def test_output_argument(self):

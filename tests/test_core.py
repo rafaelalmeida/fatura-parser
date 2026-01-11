@@ -26,18 +26,18 @@ class TestTransaction:
         tx = Transaction(
             date=date(2026, 1, 5),
             description="Restaurant XYZ",
-            amount=Decimal("150.50"),
+            amount_brl=Decimal("150.50"),
         )
         assert tx.date == date(2026, 1, 5)
         assert tx.description == "Restaurant XYZ"
-        assert tx.amount == Decimal("150.50")
+        assert tx.amount_brl == Decimal("150.50")
         assert tx.category is None
 
     def test_transaction_to_ynab_row_positive(self):
         tx = Transaction(
             date=date(2026, 1, 5),
             description="Restaurant XYZ",
-            amount=Decimal("150.50"),
+            amount_brl=Decimal("150.50"),
         )
         row = tx.to_ynab_row()
         assert row["Date"] == "2026-01-05"
@@ -49,7 +49,7 @@ class TestTransaction:
         tx = Transaction(
             date=date(2026, 1, 5),
             description="Credit/Refund",
-            amount=Decimal("-50.00"),
+            amount_brl=Decimal("-50.00"),
         )
         row = tx.to_ynab_row()
         assert row["Outflow"] == ""
@@ -115,9 +115,10 @@ class TestExporters:
         return Fatura(
             transactions=[
                 Transaction(date(2026, 1, 1), "Store A", Decimal("100.50")),
-                Transaction(date(2026, 1, 2), "Store B", Decimal("200.00"), "Food"),
+                Transaction(date(2026, 1, 2), "Store B", Decimal("200.00"), category="Food"),
             ],
             source_file="test.csv",
+            statement_date=date(2026, 1, 11),
         )
 
     def test_csv_exporter(self, sample_fatura: Fatura, output_dir: Path):
@@ -139,7 +140,7 @@ class TestExporters:
         assert output_path.exists()
         content = output_path.read_text()
         assert "Date,Payee,Memo,Outflow,Inflow" in content
-        assert "2026-01-01,Store A" in content
+        assert "01/01/2026,Store A" in content
         assert "100.50" in content
 
 

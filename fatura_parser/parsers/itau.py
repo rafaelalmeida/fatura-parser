@@ -16,6 +16,7 @@ from ..core import (
     PaymentMethod,
     Installment,
     InternationalInfo,
+    Card,
 )
 
 try:
@@ -42,6 +43,8 @@ class ItauPDFParser:
     CATEGORY_LOCATION_PATTERN = re.compile(r"^([A-ZÇÃÕÉÊÍÓÚÀÂÔÜ][A-ZÇÃÕÉÊÍÓÚÀÂÔÜ ]*?)\s*\.\s*([A-Za-zçãõéêíóúàâôü ]+)$")
     INSTALLMENT_PATTERN = re.compile(r"(\d{2})/(\d{2})\s+((?:-\s*)?\d{1,3}(?:[\. ]\d{3})*,\d{2})$")
     CARD_FINAL_PATTERN = re.compile(r"final\s*(\d{4})")
+    # Card header format: "RAFAEL A BATISTA (final 6529)" - cardholder name with optional middle initials
+    CARD_HEADER_PATTERN = re.compile(r"([A-Z][A-Z\s]+?)\s*\(\s*final\s*(\d{4})\s*\)")
     TOTAL_FATURA_PATTERN = re.compile(r"Total\s*desta\s*fatura\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
     PREVIOUS_BALANCE_PATTERN = re.compile(r"Total\s*da\s*fatura\s*anterior\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
     PAYMENT_PATTERN = re.compile(r"Pagamento\s*efetuado\s*em\s*(\d{2}/\d{2}/\d{4})\s*[-\s]+(\d{1,3}(?:[.\s]\d{3})*,\d{2})")
@@ -208,12 +211,17 @@ class ItauPDFParser:
                 continue
             
             # New card header resets future section but NOT intl section
-            if "RAFAEL" in line.upper() and "final" in line.lower():
-                card_match = self.CARD_FINAL_PATTERN.search(line)
-                if card_match:
-                    state["current_card"] = card_match.group(1)
-                    state["in_future_section"] = False
-                    # Don't reset in_intl_section - international has no card header per-section
+            # Format: "CARDHOLDER NAME final 1234"
+            card_header_match = self.CARD_HEADER_PATTERN.search(line)
+            if card_header_match:
+                holder_name = card_header_match.group(1).strip()
+                last_digits = card_header_match.group(2)
+                card = Card(holder_name=holder_name, last_digits=last_digits)
+                state["current_card"] = card
+                # Register card in fatura
+                fatura.cards[last_digits] = card
+                state["in_future_section"] = False
+                # Don't reset in_intl_section - international has no card header per-section
                 i += 1
                 continue
             
@@ -273,7 +281,7 @@ class ItauPDFParser:
                         date=tx_date,
                         description=description,
                         amount_brl=self._parse_brl_amount(amount_str),
-                        card_last_digits=state.get("current_card"),
+                        card=state.get("current_card"),
                         transaction_type=TransactionType.PARCELADA,
                         installment=Installment(current=current_inst, total=total_inst),
                     )
@@ -289,7 +297,7 @@ class ItauPDFParser:
                                 amount_brl=tx.amount_brl,
                                 category=cat_match.group(1).strip(),
                                 location=cat_match.group(2).strip().upper(),
-                                card_last_digits=tx.card_last_digits,
+                                card=tx.card,
                                 transaction_type=tx.transaction_type,
                                 installment=tx.installment,
                             )
@@ -319,7 +327,7 @@ class ItauPDFParser:
                         date=tx_date,
                         description=description,
                         amount_brl=self._parse_brl_amount(amount_str),
-                        card_last_digits=state.get("current_card"),
+                        card=state.get("current_card"),
                         transaction_type=TransactionType.A_VISTA,
                     )
                     
@@ -334,7 +342,7 @@ class ItauPDFParser:
                                 amount_brl=tx.amount_brl,
                                 category=cat_match.group(1).strip(),
                                 location=cat_match.group(2).strip().upper(),
-                                card_last_digits=tx.card_last_digits,
+                                card=tx.card,
                                 transaction_type=tx.transaction_type,
                             )
                             i += 1
@@ -372,7 +380,7 @@ class ItauPDFParser:
                     continue
                 
                 lines = col_text.split("\n")
-                current_card: Optional[str] = None
+                current_card: Optional[Card] = None
                 in_intl_section = False
                 pending: Optional[Dict[str, Any]] = None
                 
@@ -380,10 +388,13 @@ class ItauPDFParser:
                     # Detect international section start
                     if "Lançamentos internacionais" in line:
                         in_intl_section = True
-                        # Check for card info
-                        card_match = self.CARD_FINAL_PATTERN.search(line)
-                        if card_match:
-                            current_card = card_match.group(1)
+                        # Check for card info with holder name
+                        card_header_match = self.CARD_HEADER_PATTERN.search(line)
+                        if card_header_match:
+                            holder_name = card_header_match.group(1).strip()
+                            last_digits = card_header_match.group(2)
+                            current_card = Card(holder_name=holder_name, last_digits=last_digits)
+                            fatura.cards[last_digits] = current_card
                         continue
                     
                     if not in_intl_section:
@@ -417,10 +428,12 @@ class ItauPDFParser:
                         continue
                     
                     # Card header within international section
-                    if "RAFAEL" in line.upper() and "final" in line.lower():
-                        card_match = self.CARD_FINAL_PATTERN.search(line)
-                        if card_match:
-                            current_card = card_match.group(1)
+                    card_header_match = self.CARD_HEADER_PATTERN.search(line)
+                    if card_header_match:
+                        holder_name = card_header_match.group(1).strip()
+                        last_digits = card_header_match.group(2)
+                        current_card = Card(holder_name=holder_name, last_digits=last_digits)
+                        fatura.cards[last_digits] = current_card
                         continue
                     
                     # Exchange rate line (completes previous transaction)
@@ -479,8 +492,7 @@ class ItauPDFParser:
             date=data["date"],
             description=data["description"],
             amount_brl=data["amount_brl"],
-            # International transactions are tracked separately, not by card
-            card_last_digits=None,
+            card=data.get("card"),  # Now stores Card object
             transaction_type=TransactionType.A_VISTA,
             international=intl_info,
             payment_method=PaymentMethod.ONLINE,

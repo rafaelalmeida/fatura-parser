@@ -13,6 +13,7 @@ from fatura_parser.core import (
     PaymentMethod,
     Installment,
     InternationalInfo,
+    Card,
     YNABExporter,
 )
 from fatura_parser.parsers.itau import ItauPDFParser
@@ -58,18 +59,46 @@ class TestItauPDFParserStructure:
         assert parsed_fatura.calculated_total == Decimal("19056.06")
 
     def test_card_totals(self, parsed_fatura: Fatura):
-        """Test that card-specific totals are correct."""
+        """Test that card-specific totals are correct (including international transactions)."""
         card_totals = {}
         for tx in parsed_fatura.transactions:
-            card = tx.card_last_digits or "intl"
+            card = tx.card.last_digits if tx.card else "unknown"
             card_totals[card] = card_totals.get(card, Decimal("0")) + tx.amount_brl
 
         assert card_totals["6529"] == Decimal("1429.80")
-        assert card_totals["8898"] == Decimal("6611.87")
+        # 8898 includes international transactions
+        assert card_totals["8898"] == Decimal("7512.64")
         assert card_totals["5415"] == Decimal("4717.78")
         assert card_totals["8626"] == Decimal("2924.12")
         assert card_totals["1767"] == Decimal("1470.89")
         assert card_totals["3273"] == Decimal("618.89")
+        # Some international transactions may not have card headers
+        assert "unknown" in card_totals
+
+    def test_cards_parsed(self, parsed_fatura: Fatura):
+        """Test that cards are parsed with holder names."""
+        # Should have cards registered
+        assert len(parsed_fatura.cards) > 0
+        
+        # Each card should have holder name and last digits
+        for last_digits, card in parsed_fatura.cards.items():
+            assert card.last_digits == last_digits
+            assert card.holder_name is not None
+            assert len(card.holder_name) > 0
+            # Display ID should be in format XXX*1234
+            assert "*" in card.display_id
+            assert card.short_name == card.holder_name[:3].upper()
+
+    def test_transactions_by_card(self, parsed_fatura: Fatura):
+        """Test that transactions can be grouped by card."""
+        by_card = parsed_fatura.transactions_by_card()
+        
+        # Should have entries for each card
+        assert len(by_card) > 0
+        
+        # All transactions should be accounted for
+        total_txs = sum(len(txs) for txs in by_card.values())
+        assert total_txs == len(parsed_fatura.transactions)
 
 
 class TestItauTransactionParsing:
@@ -92,7 +121,8 @@ class TestItauTransactionParsing:
         assert tx is not None
         assert tx.date == date(2025, 10, 16)
         assert tx.amount_brl == Decimal("125.95")
-        assert tx.card_last_digits == "6529"
+        assert tx.card is not None
+        assert tx.card.last_digits == "6529"
         assert tx.transaction_type == TransactionType.A_VISTA
         assert tx.category == "ALIMENTAÇÃO"
         assert tx.location == "BELO HORIZONT"
@@ -103,7 +133,7 @@ class TestItauTransactionParsing:
         # Find a known parcelada transaction
         tx = next(
             (t for t in parsed_fatura.transactions 
-             if t.description == "AUTO JAPAN" and t.card_last_digits == "5415"),
+             if t.description == "AUTO JAPAN" and t.card and t.card.last_digits == "5415"),
             None
         )
         assert tx is not None
@@ -152,7 +182,7 @@ class TestItauTransactionParsing:
         assert github_tx.international.original_currency == "USD"
         assert github_tx.international.exchange_rate == Decimal("5.83")
         assert github_tx.international.city == "SAN FRANCISCO"
-        assert github_tx.card_last_digits is None  # International transactions have no card
+        assert github_tx.card is not None  # International transactions now have card info
         assert github_tx.payment_method == PaymentMethod.ONLINE
 
 
@@ -245,9 +275,14 @@ class TestYNABExport:
         
         assert auto_japan is not None
         memo = auto_japan["Memo"]
-        assert "card:5415" in memo
+        # Card format is now NAME*DIGITS (e.g., RAF*5415)
+        assert "card:" in memo
+        assert "*5415" in memo
         assert "orig:26/03/2025" in memo
         assert "parcela:8/10" in memo
+        # exported_at should be at the end
+        assert "exp:" in memo
+        assert memo.index("exp:") > memo.index("parcela:")
 
     def test_ynab_international_memo(self, exported_ynab: tuple[Path, Decimal]):
         """Test that international transactions have correct memo format."""
@@ -264,6 +299,10 @@ class TestYNABExport:
         assert "intl:" in memo
         assert "USD" in memo
         assert "city:" in memo
+        # Card should be present for international transactions too
+        assert "card:" in memo
+        # exported_at should be at the end
+        assert "exp:" in memo
 
     def test_ynab_iof_transaction(self, exported_ynab: tuple[Path, Decimal]):
         """Test that IOF is added as a separate transaction."""
@@ -279,7 +318,8 @@ class TestYNABExport:
         assert iof["Date"] == "01/11/2025"  # First of statement month
         assert iof["Outflow"] == "45.00"
         assert iof["Inflow"] == ""
-        assert iof["Memo"] == "iof"
+        assert "iof" in iof["Memo"]
+        assert "exp:" in iof["Memo"]
 
     def test_ynab_payment_transaction(self, exported_ynab: tuple[Path, Decimal]):
         """Test that payment is added as an inflow."""
@@ -295,7 +335,8 @@ class TestYNABExport:
         assert payment["Date"] == "10/10/2025"  # Payment date from PDF
         assert payment["Outflow"] == ""
         assert payment["Inflow"] == "27579.80"
-        assert payment["Memo"] == "payment"
+        assert "payment" in payment["Memo"]
+        assert "exp:" in payment["Memo"]
 
     def test_ynab_credit_as_inflow(self, exported_ynab: tuple[Path, Decimal]):
         """Test that credit transactions are exported as inflow."""
