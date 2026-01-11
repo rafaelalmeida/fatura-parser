@@ -19,8 +19,8 @@ except ImportError:
 
 class TransactionType(Enum):
     """Type of transaction."""
-    A_VISTA = "à vista"
-    PARCELADA = "parcelada"
+    A_VISTA = "A_VISTA"
+    PARCELADA = "PARCELADA"
 
 
 class PaymentMethod(Enum):
