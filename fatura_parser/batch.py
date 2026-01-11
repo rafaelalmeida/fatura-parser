@@ -83,26 +83,43 @@ def colored_print(message: str, color: str = "", style: str = ""):
     print(f"{style}{color}{message}{Style.RESET_ALL}")
 
 
-def prompt_yes_no(message: str, default: Optional[bool] = None) -> bool:
-    """Prompt user for yes/no input with optional default."""
-    if default is True:
-        suffix = "[Y/n]"
-    elif default is False:
-        suffix = "[y/N]"
+def prompt_yes_no(message: str, default: Optional[bool] = None, allow_quit: bool = False) -> str:
+    """Prompt user for yes/no input with optional default and quit option.
+    
+    Returns:
+        'yes', 'no', or 'quit' (if allow_quit is True)
+    """
+    if allow_quit:
+        if default is True:
+            suffix = "[Y/n/q]"
+        elif default is False:
+            suffix = "[y/N/q]"
+        else:
+            suffix = "[y/n/q]"
     else:
-        suffix = "[y/n]"
+        if default is True:
+            suffix = "[Y/n]"
+        elif default is False:
+            suffix = "[y/N]"
+        else:
+            suffix = "[y/n]"
     
     while True:
         response = input(f"{Fore.CYAN}{message} {suffix}: {Style.RESET_ALL}").strip().lower()
         if response == "":
             if default is not None:
-                return default
+                return "yes" if default else "no"
             continue
         if response in ("y", "yes"):
-            return True
+            return "yes"
         if response in ("n", "no"):
-            return False
-        print(f"{Fore.YELLOW}Please enter 'y' or 'n'{Style.RESET_ALL}")
+            return "no"
+        if allow_quit and response in ("q", "quit"):
+            return "quit"
+        if allow_quit:
+            print(f"{Fore.YELLOW}Please enter 'y', 'n', or 'q' to quit{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.YELLOW}Please enter 'y' or 'n'{Style.RESET_ALL}")
 
 
 def prompt_skip_replace(file_path: Path) -> str:
@@ -247,7 +264,8 @@ def run_batch(
         print(f"Password file:  {password_file}")
     print()
     
-    if not prompt_yes_no("Continue?", default=True):
+    response = prompt_yes_no("Continue?", default=True, allow_quit=False)
+    if response == "no":
         colored_print("Aborted.", Fore.YELLOW)
         return 0
     
@@ -306,9 +324,14 @@ def run_batch(
             
             if not fatura.transactions:
                 colored_print("Warning: No transactions found!", Fore.YELLOW)
-                if not prompt_yes_no("Continue anyway?", default=False):
+                response = prompt_yes_no("Continue anyway?", default=False, allow_quit=True)
+                if response == "no":
                     logger.log(FileStatus.REJECTED, pdf_path, "No transactions found, user rejected")
                     continue
+                elif response == "quit":
+                    colored_print("Batch interrupted by user.", Fore.YELLOW)
+                    logger.log(FileStatus.SKIPPED, pdf_path, "Batch interrupted by user")
+                    break
             
             # Show summary
             print_summary(fatura, export_format)
@@ -324,7 +347,8 @@ def run_batch(
         
         # Export to temp location first
         print()
-        if prompt_yes_no("Accept and save?", default=True):
+        response = prompt_yes_no("Accept and save?", default=True, allow_quit=True)
+        if response == "yes":
             try:
                 if export_format == "json":
                     parser.export_json(fatura, output_path)
@@ -338,13 +362,20 @@ def run_batch(
             except Exception as e:
                 colored_print(f"Error saving: {e}", Fore.RED)
                 logger.log(FileStatus.ERROR, pdf_path, f"Export error: {e}")
-        else:
+        elif response == "no":
             colored_print("Rejected.", Fore.YELLOW)
             # Remove file if it was created
             if output_path.exists():
                 output_path.unlink()
                 colored_print(f"Removed: {output_path.name}", Fore.YELLOW, Style.DIM)
             logger.log(FileStatus.REJECTED, pdf_path, "User rejected")
+        else:  # quit
+            colored_print("Batch interrupted by user.", Fore.YELLOW)
+            # Remove file if it was created
+            if output_path.exists():
+                output_path.unlink()
+            logger.log(FileStatus.SKIPPED, pdf_path, "Batch interrupted by user")
+            break
     
     # Print final summary
     counts = logger.write_summary()

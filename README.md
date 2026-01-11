@@ -58,7 +58,7 @@ fatura-parser --batch /path/to/faturas --format json -p ~/.fatura-password
 Batch mode features:
 - Recursively finds all PDF files in the directory
 - Shows checksum verification for each file
-- Prompts to accept or reject each export
+- Prompts to accept or reject each export (press 'q' to quit batch entirely)
 - Handles existing files (skip, replace, or view)
 - Creates a timestamped log file with all actions
 - Colored terminal output for better visibility
