@@ -120,35 +120,28 @@ def run_itau_parser(args: argparse.Namespace) -> int:
         if args.format == "json":
             parser.export_json(fatura, output_path)
         elif args.format == "ynab":
-            from fatura_parser.core import YNABExporter, Transaction, Fatura
-            from decimal import Decimal
-            # Convert to generic format
-            transactions = [
-                Transaction(
-                    date=t.date,
-                    description=t.description,
-                    amount=t.amount_brl,
-                    category=t.category,
-                )
-                for t in fatura.transactions
-            ]
-            generic_fatura = Fatura(transactions=transactions, source_file=str(input_path), card_issuer="Itaú")
+            from fatura_parser.core import YNABExporter
             exporter = YNABExporter()
-            exporter.export(generic_fatura, output_path)
+            checksum = exporter.export(fatura, output_path)
+            
+            # Print YNAB-specific checksum (excludes payment)
+            print(f"\n{'='*50}")
+            print("YNAB EXPORT CHECKSUM")
+            print(f"{'='*50}")
+            print(f"Sum of transactions (excl. payment): R$ {checksum:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+            print(f"PDF total (current charges):         R$ {fatura.total_amount:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+            print(f"{'='*50}")
+            print(f"Transactions exported:     {len(fatura.transactions)}")
+            if fatura.iof_international > 0:
+                print(f"IOF transaction added:     R$ {fatura.iof_international:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+            if fatura.payment_made > 0:
+                print(f"Payment credit added:      R$ {fatura.payment_made:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+            print(f"Output written to:         {output_path}")
+            return 0
         else:  # csv
-            from fatura_parser.core import CSVExporter, Transaction, Fatura
-            transactions = [
-                Transaction(
-                    date=t.date,
-                    description=t.description,
-                    amount=t.amount_brl,
-                    category=t.category,
-                )
-                for t in fatura.transactions
-            ]
-            generic_fatura = Fatura(transactions=transactions, source_file=str(input_path), card_issuer="Itaú")
+            from fatura_parser.core import CSVExporter
             exporter = CSVExporter()
-            exporter.export(generic_fatura, output_path)
+            exporter.export(fatura, output_path)
 
         # Print checksum information
         print(f"\n{'='*50}")

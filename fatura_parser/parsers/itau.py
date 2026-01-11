@@ -44,7 +44,7 @@ class ItauPDFParser:
     CARD_FINAL_PATTERN = re.compile(r"final\s*(\d{4})")
     TOTAL_FATURA_PATTERN = re.compile(r"Total\s*desta\s*fatura\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
     PREVIOUS_BALANCE_PATTERN = re.compile(r"Total\s*da\s*fatura\s*anterior\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
-    PAYMENT_PATTERN = re.compile(r"Pagamento\s*efetuado\s*em\s*\d{2}/\d{2}/\d{4}\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
+    PAYMENT_PATTERN = re.compile(r"Pagamento\s*efetuado\s*em\s*(\d{2}/\d{2}/\d{4})\s*[-\s]+(\d{1,3}(?:[.\s]\d{3})*,\d{2})")
     CURRENT_CHARGES_PATTERN = re.compile(r"Lançamentos\s*atuais\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
     DUE_DATE_PATTERN = re.compile(r"Vencimento\s*:\s*(\d{2}/\d{2}/\d{4})")
     STATEMENT_DATE_PATTERN = re.compile(r"Emissão\s*:\s*(\d{2}/\d{2}/\d{4})")
@@ -126,7 +126,8 @@ class ItauPDFParser:
         
         match = self.PAYMENT_PATTERN.search(text)
         if match:
-            fatura.payment_made = self._parse_brl_amount(match.group(1))
+            fatura.payment_date = self._parse_full_date(match.group(1))
+            fatura.payment_made = self._parse_brl_amount(match.group(2))
         
         match = self.CURRENT_CHARGES_PATTERN.search(text)
         if match:

@@ -114,6 +114,7 @@ class Fatura:
     card_issuer: Optional[str] = None
     statement_date: Optional[date] = None
     due_date: Optional[date] = None
+    payment_date: Optional[date] = None
     previous_balance: Decimal = Decimal("0")
     payment_made: Decimal = Decimal("0")
     current_charges: Decimal = Decimal("0")
@@ -137,6 +138,7 @@ class Fatura:
             "card_issuer": self.card_issuer,
             "statement_date": self.statement_date.isoformat() if self.statement_date else None,
             "due_date": self.due_date.isoformat() if self.due_date else None,
+            "payment_date": self.payment_date.isoformat() if self.payment_date else None,
             "previous_balance": str(self.previous_balance),
             "payment_made": str(self.payment_made),
             "current_charges": str(self.current_charges),
@@ -219,19 +221,132 @@ class CSVExporter:
 
 
 class YNABExporter:
-    """Export fatura to YNAB-compatible CSV format."""
+    """Export fatura to YNAB-compatible CSV format.
+    
+    Features:
+    - Transaction details (card, parcela, intl info) in memo field
+    - Parcelada transactions use first of statement month as effective date
+    - IOF as separate transaction on first of month
+    - Previous fatura payment as credit on payment date
+    """
 
     YNAB_HEADERS = ["Date", "Payee", "Memo", "Outflow", "Inflow"]
 
-    def export(self, fatura: Fatura, output_path: Path) -> None:
-        """Export fatura transactions to YNAB format."""
-        import csv
+    def _format_date(self, d: date) -> str:
+        """Format date as DD/MM/YYYY for YNAB."""
+        return d.strftime("%d/%m/%Y")
 
+    def _first_of_month(self, d: date) -> date:
+        """Return the first day of the month for a given date."""
+        return date(d.year, d.month, 1)
+
+    def _build_memo(self, tx: Transaction, original_date: Optional[date] = None) -> str:
+        """Build compact memo with transaction details separated by ';'."""
+        parts: List[str] = []
+        
+        # Card info
+        if tx.card_last_digits:
+            parts.append(f"card:{tx.card_last_digits}")
+        
+        # Original date for parcelada
+        if original_date:
+            parts.append(f"orig:{original_date.strftime('%d/%m/%Y')}")
+        
+        # Installment info
+        if tx.installment:
+            parts.append(f"parcela:{tx.installment.current}/{tx.installment.total}")
+        
+        # International info
+        if tx.international:
+            intl = tx.international
+            parts.append(f"intl:{intl.original_amount}{intl.original_currency}@{intl.exchange_rate}")
+            if intl.city:
+                parts.append(f"city:{intl.city}")
+        
+        # Category
+        if tx.category:
+            parts.append(f"cat:{tx.category}")
+        
+        # Location
+        if tx.location:
+            parts.append(f"loc:{tx.location}")
+        
+        return "; ".join(parts)
+
+    def _format_amount(self, amount: Decimal) -> str:
+        """Format amount with 2 decimal places."""
+        return f"{abs(amount):.2f}"
+
+    def export(self, fatura: Fatura, output_path: Path) -> Decimal:
+        """Export fatura transactions to YNAB format.
+        
+        Returns the checksum (sum of all transactions except payment).
+        """
+        import csv
+        
+        rows: List[Dict[str, str]] = []
+        checksum = Decimal("0")
+        
+        # Get statement first of month for parcelada effective date
+        if fatura.statement_date:
+            effective_date = self._first_of_month(fatura.statement_date)
+        else:
+            effective_date = date.today().replace(day=1)
+        
+        # Process all transactions
+        for tx in fatura.transactions:
+            # For parcelada, use first of statement month as effective date
+            if tx.transaction_type == TransactionType.PARCELADA:
+                tx_date = effective_date
+                original_date = tx.date
+            else:
+                tx_date = tx.date
+                original_date = None
+            
+            memo = self._build_memo(tx, original_date)
+            
+            row = {
+                "Date": self._format_date(tx_date),
+                "Payee": tx.description,
+                "Memo": memo,
+                "Outflow": self._format_amount(tx.amount_brl) if tx.amount_brl > 0 else "",
+                "Inflow": self._format_amount(tx.amount_brl) if tx.amount_brl < 0 else "",
+            }
+            rows.append(row)
+            checksum += tx.amount_brl
+        
+        # Add IOF as a transaction on first of month
+        if fatura.iof_international > 0:
+            row = {
+                "Date": self._format_date(effective_date),
+                "Payee": "IOF Internacional",
+                "Memo": "iof",
+                "Outflow": self._format_amount(fatura.iof_international),
+                "Inflow": "",
+            }
+            rows.append(row)
+            checksum += fatura.iof_international
+        
+        # Add payment of previous fatura as credit (negative/inflow)
+        if fatura.payment_made > 0 and fatura.payment_date:
+            row = {
+                "Date": self._format_date(fatura.payment_date),
+                "Payee": "Pagamento Fatura Anterior",
+                "Memo": "payment",
+                "Outflow": "",
+                "Inflow": self._format_amount(fatura.payment_made),
+            }
+            rows.append(row)
+            # Note: payment is NOT included in checksum per requirements
+        
+        # Write to file
         with output_path.open("w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=self.YNAB_HEADERS)
             writer.writeheader()
-            for tx in fatura.transactions:
-                writer.writerow(tx.to_ynab_row())
+            for row in rows:
+                writer.writerow(row)
+        
+        return checksum
 
 
 def get_parser(file_format: FileFormat) -> BaseFaturaParser:
