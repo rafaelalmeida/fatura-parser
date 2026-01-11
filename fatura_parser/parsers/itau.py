@@ -133,23 +133,27 @@ class ItauPDFParser:
     LEFT_COLUMN_END = 355
     RIGHT_COLUMN_START = 355
     
-    # Regex patterns
+    # Text extraction settings - use x_tolerance=1 for proper word spacing
+    TEXT_EXTRACTION_SETTINGS = {"x_tolerance": 1}
+    
+    # Regex patterns (updated for properly spaced text)
+    # Note: Credit transactions have "- " (minus with space) before amount
     DATE_PATTERN = re.compile(r"^(\d{2}/\d{2})\s+")
-    AMOUNT_PATTERN = re.compile(r"(-?\d{1,3}(?:\.\d{3})*,\d{2})$")
-    CATEGORY_LOCATION_PATTERN = re.compile(r"^([A-ZÇÃÕÉÊÍÓÚÀÂÔÜ]+(?:[A-ZÇÃÕÉÊÍÓÚÀÂÔÜ]*)*)\.([A-Za-zçãõéêíóúàâôü]+)$")
-    INSTALLMENT_PATTERN = re.compile(r"(\d{2})/(\d{2})\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})$")
-    CARD_FINAL_PATTERN = re.compile(r"final(\d{4})")
-    TOTAL_FATURA_PATTERN = re.compile(r"Totaldestafatura\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
-    PREVIOUS_BALANCE_PATTERN = re.compile(r"Totaldafaturaanterior\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
-    PAYMENT_PATTERN = re.compile(r"Pagamentoefetuadoem\d{2}/\d{2}/\d{4}\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
-    CURRENT_CHARGES_PATTERN = re.compile(r"Lançamentosatuais\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
-    DUE_DATE_PATTERN = re.compile(r"Vencimento:(\d{2}/\d{2}/\d{4})")
-    STATEMENT_DATE_PATTERN = re.compile(r"Emissão:(\d{2}/\d{2}/\d{4})")
-    CARD_SUBTOTAL_PATTERN = re.compile(r"Lançamentosnocartão\(final(\d{4})\)\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
-    INTL_TOTAL_PATTERN = re.compile(r"Totaltransaçõesinter\.emR\$\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
-    IOF_INTL_PATTERN = re.compile(r"RepassedeIOFemR\$\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})")
-    EXCHANGE_RATE_PATTERN = re.compile(r"DólardeConversãoR\$(\d+,\d{2})")
-    INTL_DETAILS_PATTERN = re.compile(r"([A-Z][A-Z0-9\-]+(?:\s+[A-Z0-9\-]+)*)\s+(\d+,\d{2})\s+(USD|BRL|EUR)\s+(\d+,\d{2})")
+    AMOUNT_PATTERN = re.compile(r"((?:-\s*)?\d{1,3}(?:[\. ]\d{3})*,\d{2})$")
+    CATEGORY_LOCATION_PATTERN = re.compile(r"^([A-ZÇÃÕÉÊÍÓÚÀÂÔÜ][A-ZÇÃÕÉÊÍÓÚÀÂÔÜ ]*?)\s*\.\s*([A-Za-zçãõéêíóúàâôü ]+)$")
+    INSTALLMENT_PATTERN = re.compile(r"(\d{2})/(\d{2})\s+((?:-\s*)?\d{1,3}(?:[\. ]\d{3})*,\d{2})$")
+    CARD_FINAL_PATTERN = re.compile(r"final\s*(\d{4})")
+    TOTAL_FATURA_PATTERN = re.compile(r"Total\s*desta\s*fatura\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
+    PREVIOUS_BALANCE_PATTERN = re.compile(r"Total\s*da\s*fatura\s*anterior\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
+    PAYMENT_PATTERN = re.compile(r"Pagamento\s*efetuado\s*em\s*\d{2}/\d{2}/\d{4}\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
+    CURRENT_CHARGES_PATTERN = re.compile(r"Lançamentos\s*atuais\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
+    DUE_DATE_PATTERN = re.compile(r"Vencimento\s*:\s*(\d{2}/\d{2}/\d{4})")
+    STATEMENT_DATE_PATTERN = re.compile(r"Emissão\s*:\s*(\d{2}/\d{2}/\d{4})")
+    CARD_SUBTOTAL_PATTERN = re.compile(r"Lançamentos\s*no\s*cartão\s*\(\s*final\s*(\d{4})\s*\)\s+(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
+    INTL_TOTAL_PATTERN = re.compile(r"Total\s*transações\s*inter\.?\s*em\s*R\s*\$\s*(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
+    IOF_INTL_PATTERN = re.compile(r"Repasse\s*de\s*IOF\s*em\s*R\s*\$\s*(-?\d{1,3}(?:[\. ]\d{3})*,\d{2})")
+    EXCHANGE_RATE_PATTERN = re.compile(r"Dólar\s*de\s*Conversão\s*R\s*\$\s*(\d+,\d{2})")
+    INTL_DETAILS_PATTERN = re.compile(r"([A-Z][A-Z0-9\- ]+?)\s+(\d+,\d{2})\s+(USD|BRL|EUR)\s+(\d+,\d{2})")
 
     def __init__(self):
         if pdfplumber is None:
@@ -183,8 +187,15 @@ class ItauPDFParser:
         return fatura
 
     def _parse_brl_amount(self, amount_str: str) -> Decimal:
-        """Parse a Brazilian format amount string to Decimal."""
-        cleaned = amount_str.replace(".", "").replace(",", ".")
+        """Parse a Brazilian format amount string to Decimal.
+        
+        Handles formats like:
+        - "1.234,56" -> 1234.56
+        - "-1.234,56" -> -1234.56
+        - "- 1.234,56" -> -1234.56 (space after minus, used for credits)
+        """
+        # Remove spaces first (handles "- 123,45" format for credits)
+        cleaned = amount_str.replace(" ", "").replace(".", "").replace(",", ".")
         try:
             return Decimal(cleaned)
         except InvalidOperation:
@@ -204,7 +215,7 @@ class ItauPDFParser:
 
     def _parse_summary(self, page, fatura: ItauFatura) -> None:
         """Parse the summary section from page 1."""
-        text = page.extract_text() or ""
+        text = page.extract_text(**self.TEXT_EXTRACTION_SETTINGS) or ""
         
         match = self.TOTAL_FATURA_PATTERN.search(text)
         if match:
@@ -238,10 +249,10 @@ class ItauPDFParser:
             fatura: The fatura object to populate
             state: Mutable dict tracking current_card, in_future_section, in_intl_section
         """
-        full_text = page.extract_text() or ""
+        full_text = page.extract_text(**self.TEXT_EXTRACTION_SETTINGS) or ""
         
-        # Skip pages without transaction content
-        if "Lançamentos:comprasesaques" not in full_text:
+        # Skip pages without transaction content (check with spaces)
+        if "Lançamentos" not in full_text or "compras e saques" not in full_text:
             return
         
         statement_year = fatura.statement_date.year if fatura.statement_date else 2025
@@ -249,7 +260,7 @@ class ItauPDFParser:
         # Crop and parse left column
         try:
             left = page.crop((self.LEFT_COLUMN_START, 0, self.LEFT_COLUMN_END, page.height))
-            left_text = left.extract_text() or ""
+            left_text = left.extract_text(**self.TEXT_EXTRACTION_SETTINGS) or ""
             self._parse_column_text(left_text, fatura, statement_year, state)
         except Exception:
             pass
@@ -257,7 +268,7 @@ class ItauPDFParser:
         # Crop and parse right column
         try:
             right = page.crop((self.RIGHT_COLUMN_START, 0, page.width, page.height))
-            right_text = right.extract_text() or ""
+            right_text = right.extract_text(**self.TEXT_EXTRACTION_SETTINGS) or ""
             self._parse_column_text(right_text, fatura, statement_year, state)
         except Exception:
             pass
@@ -285,13 +296,13 @@ class ItauPDFParser:
                 continue
             
             # Check for future installments section (skip these)
-            if "próximasfaturas" in line.lower() or "Comprasparceladas" in line:
+            if "próximas faturas" in line.lower() or "Compras parceladas" in line:
                 state["in_future_section"] = True
                 i += 1
                 continue
             
             # Check for international section (handled separately by _parse_international_from_text)
-            if "Lançamentosinternacionais" in line:
+            if "Lançamentos internacionais" in line:
                 state["in_intl_section"] = True
                 i += 1
                 continue
@@ -306,8 +317,8 @@ class ItauPDFParser:
                 i += 1
                 continue
             
-            # "Lançamentos:comprasesaques" header resets international section (back to regular)
-            if "Lançamentos:comprasesaques" in line:
+            # "Lançamentos : compras e saques" header resets international section (back to regular)
+            if "Lançamentos" in line and "compras" in line and "saques" in line:
                 state["in_intl_section"] = False
                 i += 1
                 continue
@@ -319,18 +330,18 @@ class ItauPDFParser:
             
             # Skip headers and metadata
             if any(skip in line for skip in [
-                "DATA", "ESTABELECIMENTO", "VALOREMR$",
+                "DATA", "ESTABELECIMENTO", "VALOR EM R$", "VALOR EM R $",
                 "Continua", "Previsão", "Consulte", 
                 "30033030", "08007203030", "PC-",
                 "Caso", "pagamento", "parcelamento",
-                "crédito", "rotativo", "Demaisfaturas",
-                "Próximafatura", "Totalparapróximas"
+                "crédito", "rotativo", "Demais faturas",
+                "Próxima fatura", "Total para próximas"
             ]):
                 i += 1
                 continue
             
             # Skip subtotal lines but extract for verification
-            if "Lançamentosnocartão" in line:
+            if "Lançamentos no cartão" in line:
                 i += 1
                 continue
             
@@ -439,10 +450,10 @@ class ItauPDFParser:
         statement_year = fatura.statement_date.year if fatura.statement_date else 2025
         
         for page in pdf.pages:
-            full_text = page.extract_text() or ""
+            full_text = page.extract_text(**self.TEXT_EXTRACTION_SETTINGS) or ""
             
             # Only process pages that have international section
-            if "Lançamentosinternacionais" not in full_text:
+            if "Lançamentos internacionais" not in full_text:
                 continue
             
             # Parse both columns separately for international transactions
@@ -452,12 +463,12 @@ class ItauPDFParser:
             ]:
                 try:
                     col = page.crop((column_start, 0, column_end, page.height))
-                    col_text = col.extract_text() or ""
+                    col_text = col.extract_text(**self.TEXT_EXTRACTION_SETTINGS) or ""
                 except Exception:
                     continue
                 
                 # Skip if this column doesn't have international section
-                if "Lançamentosinternacionais" not in col_text:
+                if "Lançamentos internacionais" not in col_text:
                     continue
                 
                 lines = col_text.split("\n")
@@ -467,7 +478,7 @@ class ItauPDFParser:
                 
                 for i, line in enumerate(lines):
                     # Detect international section start
-                    if "Lançamentosinternacionais" in line:
+                    if "Lançamentos internacionais" in line:
                         in_intl_section = True
                         # Check for card info
                         card_match = self.CARD_FINAL_PATTERN.search(line)
@@ -479,26 +490,26 @@ class ItauPDFParser:
                         continue
                     
                     # End of international section
-                    if "Totaltransaçõesinter" in line:
+                    if "Total transa" in line and "inter" in line:
                         if pending:
                             self._finalize_intl_transaction(pending, fatura)
                             pending = None
                         # Don't set in_intl_section = False yet - IOF line comes next
                         continue
                     
-                    # Parse IOF line (comes after Totaltransaçõesinter)
-                    if "RepassedeIOF" in line:
+                    # Parse IOF line (comes after Total transações inter)
+                    if "Repasse" in line and "IOF" in line:
                         iof_match = self.IOF_INTL_PATTERN.search(line)
                         if iof_match:
                             fatura.iof_international = self._parse_brl_amount(iof_match.group(1))
                         continue
                     
                     # End after total with IOF
-                    if "Totallançamentosinter" in line:
+                    if "Total lan" in line and "inter" in line:
                         in_intl_section = False
                         continue
                     
-                    if "LTotaldoslançamentos" in line:
+                    if "Total dos lan" in line:
                         if pending:
                             self._finalize_intl_transaction(pending, fatura)
                             pending = None
@@ -513,7 +524,7 @@ class ItauPDFParser:
                         continue
                     
                     # Exchange rate line (completes previous transaction)
-                    if "DólardeConversão" in line:
+                    if "Dólar" in line and "Conversão" in line:
                         if pending:
                             rate_match = self.EXCHANGE_RATE_PATTERN.search(line)
                             if rate_match:
