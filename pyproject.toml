@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "CLI tool to parse Brazilian credit card faturas (CSV/PDF) into structured formats"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "pdfplumber>=0.10.0",
+]
 
 [project.optional-dependencies]
 dev = [

@@ -12,6 +12,12 @@ from fatura_parser.core import (
 )
 
 
+class CardIssuer:
+    """Supported card issuers."""
+    ITAU = "itau"
+    GENERIC = "generic"
+
+
 def create_parser() -> argparse.ArgumentParser:
     """Create and configure the argument parser."""
     parser = argparse.ArgumentParser(
@@ -20,9 +26,9 @@ def create_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
+  %(prog)s fatura.pdf --issuer itau -o output.json
   %(prog)s fatura.csv -o output.csv
   %(prog)s fatura.pdf --format ynab -o transactions.csv
-  %(prog)s fatura.csv --format ynab
         """,
     )
 
@@ -35,15 +41,15 @@ Examples:
     parser.add_argument(
         "-o", "--output",
         type=Path,
-        help="Output file path (default: stdout or <input>_parsed.csv)",
+        help="Output file path (default: <input>_parsed.json for Itaú, .csv otherwise)",
     )
 
     parser.add_argument(
         "-f", "--format",
         type=str,
-        choices=[f.value for f in ExportFormat],
-        default=ExportFormat.CSV.value,
-        help="Output format (default: csv)",
+        choices=["csv", "ynab", "json"],
+        default="json",
+        help="Output format (default: json for Itaú PDFs)",
     )
 
     parser.add_argument(
@@ -51,6 +57,14 @@ Examples:
         type=str,
         choices=[f.value for f in FileFormat],
         help="Input file type (default: auto-detect from extension)",
+    )
+
+    parser.add_argument(
+        "-i", "--issuer",
+        type=str,
+        choices=[CardIssuer.ITAU, CardIssuer.GENERIC],
+        default=CardIssuer.ITAU,
+        help="Card issuer (default: itau)",
     )
 
     parser.add_argument(
@@ -80,6 +94,90 @@ def detect_file_format(file_path: Path) -> FileFormat:
     return format_map[suffix]
 
 
+def run_itau_parser(args: argparse.Namespace) -> int:
+    """Run the Itaú-specific parser."""
+    from fatura_parser.parsers.itau import ItauPDFParser
+
+    input_path: Path = args.input
+    
+    # Determine output path
+    output_path = args.output
+    if output_path is None:
+        ext = ".json" if args.format == "json" else ".csv"
+        output_path = input_path.with_name(f"{input_path.stem}_parsed{ext}")
+
+    if args.verbose:
+        print(f"Input: {input_path}")
+        print(f"Issuer: Itaú")
+        print(f"Output: {output_path}")
+        print(f"Format: {args.format}")
+
+    try:
+        parser = ItauPDFParser()
+        fatura = parser.parse(input_path)
+
+        # Export based on format
+        if args.format == "json":
+            parser.export_json(fatura, output_path)
+        elif args.format == "ynab":
+            from fatura_parser.core import YNABExporter, Transaction, Fatura
+            from decimal import Decimal
+            # Convert to generic format
+            transactions = [
+                Transaction(
+                    date=t.date,
+                    description=t.description,
+                    amount=t.amount_brl,
+                    category=t.category,
+                )
+                for t in fatura.transactions
+            ]
+            generic_fatura = Fatura(transactions=transactions, source_file=str(input_path), card_issuer="Itaú")
+            exporter = YNABExporter()
+            exporter.export(generic_fatura, output_path)
+        else:  # csv
+            from fatura_parser.core import CSVExporter, Transaction, Fatura
+            transactions = [
+                Transaction(
+                    date=t.date,
+                    description=t.description,
+                    amount=t.amount_brl,
+                    category=t.category,
+                )
+                for t in fatura.transactions
+            ]
+            generic_fatura = Fatura(transactions=transactions, source_file=str(input_path), card_issuer="Itaú")
+            exporter = CSVExporter()
+            exporter.export(generic_fatura, output_path)
+
+        # Print checksum information
+        print(f"\n{'='*50}")
+        print("CHECKSUM VERIFICATION")
+        print(f"{'='*50}")
+        print(f"Parsed total from PDF:     R$ {fatura.total_amount:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+        print(f"Calculated from txns:      R$ {fatura.calculated_total:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+        
+        difference = fatura.total_amount - fatura.calculated_total
+        if difference == 0:
+            print(f"Difference:                R$ 0,00 ✓")
+        else:
+            print(f"Difference:                R$ {difference:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+            print(f"  (IOF Internacional:      R$ {fatura.iof_international:,.2f})".replace(",", "X").replace(".", ",").replace("X", "."))
+        
+        print(f"{'='*50}")
+        print(f"Transactions parsed:       {len(fatura.transactions)}")
+        print(f"Output written to:         {output_path}")
+        
+        return 0
+
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        if args.verbose:
+            import traceback
+            traceback.print_exc()
+        return 1
+
+
 def run(args: argparse.Namespace) -> int:
     """Execute the main logic with parsed arguments."""
     input_path: Path = args.input
@@ -99,12 +197,16 @@ def run(args: argparse.Namespace) -> int:
         print(f"Error: {e}", file=sys.stderr)
         return 1
 
+    # Use Itaú parser for PDFs when issuer is itau
+    if args.issuer == CardIssuer.ITAU and file_format == FileFormat.PDF:
+        return run_itau_parser(args)
+
     # Determine output path
     output_path = args.output
     if output_path is None:
         output_path = input_path.with_name(f"{input_path.stem}_parsed.csv")
 
-    export_format = ExportFormat(args.format)
+    export_format = ExportFormat(args.format) if args.format in ["csv", "ynab"] else ExportFormat.CSV
 
     if args.verbose:
         print(f"Input: {input_path}")

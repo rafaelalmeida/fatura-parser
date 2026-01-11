@@ -1,12 +1,14 @@
 """Core business logic for parsing credit card faturas."""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 from enum import Enum
 from pathlib import Path
-from typing import Protocol
+from typing import Optional, Protocol
 
 
 class FileFormat(Enum):
